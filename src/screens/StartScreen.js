@@ -1,29 +1,41 @@
-import React from 'react'
-import Background from '../components/Background'
-import Button from '../components/Button'
-import Paragraph from '../components/Paragraph'
+import * as React from 'react';
+import { Text, View, Button, StyleSheet} from "react-native";
 
-function StartScreen({ navigation }) {
+
+function StartScreen({navigation}) {
   return (
-    <Background>
-        <Paragraph>
-          A simple React Native Expo Login template app.
-        </Paragraph>
+    <View style={styles.container}>
+      <Text style={styles.text}> Welcome to Lilypad. A video streaming app</Text>
+
       <Button
-        mode="contained"
-        onPress={() => navigation.navigate('LoginScreen')}
-      >
+				title="Login"
+					onPress={() => navigation.navigate("LoginScreen")}
+								style={styles.button}
+					>
         Log in
       </Button>
-      <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('')}
-      >
-        Create an account
-      </Button>
-    </Background>
-  )
+    </View>
+  );
 }
+export default StartScreen;
+
+const styles = StyleSheet.create({
+				container: {
+								flex: 1,
+				},
+				button: {
+								borderWidth: 2,
+								borderRadius: 6,
+								backgroundColor: 'black', 
+								marginHorizontal: 5,
+				},
+
+				text: {
+								marginTop: 200,
+								marginBottom: 25,
+								textAlign: 'center',
+				}
 
 
-export default StartScreen; 
+
+})
