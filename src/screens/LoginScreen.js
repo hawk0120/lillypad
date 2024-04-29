@@ -1,94 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import Background from "../components/Background";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
 import BackButton from "../components/BackButton";
 import { emailValidator, passwordValidator } from "../utils/validator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: "", error: "" });
-  const [password, setPassword] = useState({ value: "", error: "" });
+function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const onLoginPressed = () => {
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
-    if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
-      return;
+  const onPressLogin = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post("http://0192.168.150.15:3000", {
+        email,
+        password,
+      });
+      AsyncStorage.setItem("token", response.data.token, () => {
+        console.log(response.data.token);
+      });
+      setLoading(false);
+      navigation.navigate("Dashboard");
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      alert(error);
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Dashboard" }],
-    });
-  }; // EOF
+  };
 
   return (
-    <Background>
-      <BackButton goBack={navigation.goBack} />
-      <TextInput
-        label="Email"
-        returnKeyType="next"
-        value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: "" })}
-        error={!!email.error}
-        errorText={email.error}
-        autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
-      />
-      <TextInput
-        label="Password"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: "" })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
-      <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ResetPasswordScreen")}
+    <View style={styles.container}>
+      <BackButton style={styles.backButton} goBack={navigation.goBack} />
+      <View style={styles.row}>
+        <TextInput
+          description="Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          description="Password"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <Button
+          mode="contained"
+          onPress={() => onPressLogin()}
+          laoding={loading}
         >
-          <Text style={styles.forgot}>Forgot your password ?</Text>
-        </TouchableOpacity>
+          {" "}
+          Create Account{" "}
+        </Button>
       </View>
-      <Button mode="contained" onPress={onLoginPressed}>
-        Log in
-      </Button>
-      <View style={styles.row}>
-        <Text>You do not have an account yet ?</Text>
-      </View>
-      <View style={styles.row}>
-        <TouchableOpacity onPress={() => navigation.replace("RegisterScreen")}>
-          <Text style={styles.link}>Create !</Text>
-        </TouchableOpacity>
-      </View>
-    </Background>
+    </View>
   );
 }
-
-
+export default LoginScreen;
 
 const styles = StyleSheet.create({
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 10,
+  container: {
+    flex: 1,
+    justifyContent: "center",
   },
   row: {
-    flexDirection: 'row',
-    marginTop: 4,
+    alignItems: "center",
   },
-  forgot: {
-    fontSize: 13,
-    color: "black"
-	},
-  link: {
-    fontWeight: 'bold',
-    color: "black" 
-
-	},
-})
+  button: {},
+  input: {
+    borderRadius: 5,
+  },
+});

@@ -1,14 +1,12 @@
 import React from 'react'
 import { View, StyleSheet, Text } from 'react-native'
+import {TextInput as PaperInput } from 'react-native-paper'
 
 export default function TextInput({ errorText, description, ...props }) {
   return (
     <View style={styles.container}>
-      <Input
+      <PaperInput
         style={styles.input}
-        selectionColor="grey"
-        underlineColor="transparent"
-        mode="outlined"
         {...props}
       />
       {description && !errorText ? (
@@ -19,22 +17,22 @@ export default function TextInput({ errorText, description, ...props }) {
   )
 }
 
+
+
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    marginVertical: 12,
-  },
+				alignItems: 'stretch',
+					justifyContent: 'center',
+				flexDirection: 'column',
+				minWidth:'80%'
+	},
   input: {
-    backgroundColor: "black",
-  },
+					
+					backgroundColor: "grey",
+	},
   description: {
-    fontsize: 13,
-    color: "black",
-    paddingtop: 8,
-  },
+	},
   error: {
-    fontsize: 13,
-    color:"black",
-    paddingTop: 8,
   },
 })
+
